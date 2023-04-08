@@ -13,6 +13,7 @@ $username = "tds";
 $password = "tds123";
 $dbname = "tds";
 $table = 'device_tds';
+date_default_timezone_set('Asia/Kolkata');
 
 $action = $_POST["action"];
 
@@ -30,7 +31,9 @@ if("UPDATE_FLOW" == $action){
     $litre = $_POST['litre'];
     $tds = $_POST['tds'];
     $status = $_POST['status'];
-    $sql = "INSERT INTO $table (device_id, litre, tds, status, created_on) VALUES ('$device_id','$litre','$tds','$status',current_timestamp())";
+    $date=date_create(date());
+    $tm = date_format($date,"Y-m-d H:i:s");
+    $sql = "INSERT INTO $table (device_id, litre, tds, status, created_on) VALUES ('$device_id','$litre','$tds','$status','$tm')";
     $result = $conn->query($sql);
     $conn->close();
     return;   
