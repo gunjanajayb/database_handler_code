@@ -1,9 +1,10 @@
 <?php
 $status = $_POST['status'];
 
+
 // print_r($status);
 
-$data=$_REQUEST;
+//$data=$_REQUEST;
 //print_r($data);
 
 //exit;
@@ -12,7 +13,9 @@ $servername ="localhost";
 $username = "tds";
 $password = "tds123";
 $dbname = "tds";
-$table = 'PSOC6';
+$table = "device_deadline";
+date_default_timezone_set('Asia/Kolkata');
+
 
 $action = $_POST["action"];
 
@@ -28,7 +31,7 @@ if($conn->connect_error){
 if("GET_ALL" == $action){
     $ID = $_POST['DEVICE_ID'];
     $db_data = array();
-    $sql = "SELECT * FROM $table WHERE DEVICE_ID IN ($ID)";
+    $sql = "SELECT * FROM $table WHERE device_id IN ($ID)";
     $result = $conn->query($sql);
 
     if($result->num_rows > 0){
@@ -43,39 +46,21 @@ if("GET_ALL" == $action){
     return;
 }
 
-if("ADD_DEVICE" == $action){
+if("GET_TIME" == $action){
+    $tm = getdate();
+    $db_tm[] = $tm;
+    echo json_encode($db_tm);
+    $conn->close();
+    return;
+}
+
+if("UPDATE_CTRL" == $action)
+{
     $DEVICE_ID = $_POST['DEVICE_ID'];
     $CONTROL = $_POST['CONTROL'];
-    echo $DEVICE_ID;
-
-    $sql = "SELECT DEVICE_ID FROM $table WHERE DEVICE_ID='$DEVICE_ID'";
+    $sql = "UPDATE $table SET device_status='$CONTROL' WHERE device_id='$DEVICE_ID'";
     $result = $conn->query($sql);
-    
-    if($result==false)
-    {
-        echo "new record";
-        $DATE_D = "0000-00-00";
-        $TIME_D = "00:00:00";
-        $sql = "INSERT INTO $table (DEVICE_ID, CONTROL, DATE_D, TIME_D, CUR_TIME) VALUES ('$DEVICE_ID','$CONTROL','$DATE_D','$TIME_D',current_timestamp())";
-    }
-    else
-    {
-        mysqli_free_result($result);
-        echo "existing record";
-        echo $CONTROL;
-        echo $DEVICE_ID;
-        $sql = "UPDATE $table SET CONTROL = '$CONTROL', CUR_TIME = current_timestamp() WHERE DEVICE_ID='$DEVICE_ID'";    
-    }
-    $result = $conn->query($sql);
-    if($result==false)
-    {
-        echo "ABC";
-    }
-    else
-    {
-        echo "QWE";
-    }
     $conn->close();
-    return;       
+    return;
 }
 ?>
